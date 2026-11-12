@@ -40,7 +40,7 @@ export const profile: Profile = {
   // --- 基本情報 -------------------------------------------------
   name: { ja: '山田 花子', en: 'Hanako Yamada' },
   role: { ja: '博士後期課程2年', en: 'Ph.D. Student (2nd year)' },
-  university: { ja: '九州工業大学', en: 'Kyushu Institute of Technology' },
+  university: { ja: 'サンプル大学', en: 'Sample University' },
   department: {
     ja: '大学院工学府',
     en: 'Graduate School of Engineering',
@@ -86,24 +86,24 @@ export const profile: Profile = {
       period: { ja: '2023年4月 - 現在', en: 'Apr. 2023 - present' },
       title: { ja: '博士後期課程', en: 'Ph.D. program' },
       org: {
-        ja: '九州工業大学 大学院工学府',
-        en: 'Graduate School of Engineering, Kyushu Institute of Technology',
+        ja: 'サンプル大学 大学院工学府',
+        en: 'Graduate School of Engineering, Sample University',
       },
     },
     {
       period: { ja: '2021年4月 - 2023年3月', en: 'Apr. 2021 - Mar. 2023' },
       title: { ja: '博士前期課程(修士)', en: "Master's program" },
       org: {
-        ja: '九州工業大学 大学院工学府',
-        en: 'Graduate School of Engineering, Kyushu Institute of Technology',
+        ja: 'サンプル大学 大学院工学府',
+        en: 'Graduate School of Engineering, Sample University',
       },
     },
     {
       period: { ja: '2017年4月 - 2021年3月', en: 'Apr. 2017 - Mar. 2021' },
       title: { ja: '学士', en: "Bachelor's program" },
       org: {
-        ja: '九州工業大学 工学部 航空宇宙工学科',
-        en: 'Department of Aerospace Engineering, Kyushu Institute of Technology',
+        ja: 'サンプル大学 工学部 航空宇宙工学科',
+        en: 'Department of Aerospace Engineering, Sample University',
       },
     },
   ],

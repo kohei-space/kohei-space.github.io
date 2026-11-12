@@ -36,13 +36,13 @@ export const business = {
     {
       name: { ja: '山田 花子', en: 'Hanako Yamada' },
       affiliation: {
-        ja: '九州工業大学 大学院工学府 博士後期課程',
-        en: 'Ph.D. Student, Graduate School of Engineering, Kyushu Institute of Technology',
+        ja: 'サンプル大学 大学院工学府 博士後期課程',
+        en: 'Ph.D. Student, Graduate School of Engineering, Sample University',
       },
       career: [
-        { ja: '2021年 九州工業大学 工学部 卒業', en: '2021: B.Eng., Kyushu Institute of Technology' },
-        { ja: '2023年 同 大学院 博士前期課程 修了', en: "2023: M.Eng., Kyushu Institute of Technology" },
-        { ja: '2023年〜 同 大学院 博士後期課程 在学', en: '2023-present: Ph.D. program, Kyushu Institute of Technology' },
+        { ja: '2021年 サンプル大学 工学部 卒業', en: '2021: B.Eng., Sample University' },
+        { ja: '2023年 同 大学院 博士前期課程 修了', en: "2023: M.Eng., Sample University" },
+        { ja: '2023年〜 同 大学院 博士後期課程 在学', en: '2023-present: Ph.D. program, Sample University' },
       ],
       photo: '/images/member-1.svg',
     },
@@ -61,12 +61,12 @@ export const business = {
     {
       name: { ja: '佐藤 次郎', en: 'Jiro Sato' },
       affiliation: {
-        ja: '九州工業大学 大学院工学府 博士前期課程',
-        en: "Master's Student, Graduate School of Engineering, Kyushu Institute of Technology",
+        ja: 'サンプル大学 大学院工学府 博士前期課程',
+        en: "Master's Student, Graduate School of Engineering, Sample University",
       },
       career: [
-        { ja: '2024年 九州工業大学 工学部 卒業', en: '2024: B.Eng., Kyushu Institute of Technology' },
-        { ja: '2024年〜 同 大学院 博士前期課程 在学', en: "2024-present: Master's program, Kyushu Institute of Technology" },
+        { ja: '2024年 サンプル大学 工学部 卒業', en: '2024: B.Eng., Sample University' },
+        { ja: '2024年〜 同 大学院 博士前期課程 在学', en: "2024-present: Master's program, Sample University" },
       ],
     },
   ] as Member[],
