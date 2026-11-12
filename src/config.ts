@@ -1,51 +1,49 @@
 import heroImage from './assets/hero-real.jpg';
+import { profile } from './data/profile';
 
 export const SITE = {
-  website: 'https://scholar-lite-demo.netlify.app/', // Replace with your actual deployed URL
-  author: 'Scholar-Lite Team',
-  description: 'A lightweight, modern static website template for academic labs and scholars.',
-  title: 'Scholar-Lite',
+  // 公開URL。astro.config.mjs の site(公開時は GitHub Actions が自動設定)から取得します。
+  website: import.meta.env.SITE ?? 'http://localhost:4321',
+  author: profile.name.en,
+  description: `${profile.name.en} - ${profile.headline.en}`,
+  title: profile.name.en,
+  jobTitle: profile.role.en,
   ogImage: 'astropaper-og.jpg',
   lightAndDarkMode: true,
   postPerPage: 3,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
-  
-  // Lab Info
-  labName: 'Scholar-Lite Lab',
-  university: 'University Name',
-  logo: '/assets/logo-real.svg', // Logo path
-  avatar: '/assets/logo-real.svg', // Avatar for SEO/Schema
-  email: 'contact@lab.edu', // Contact email for Join Us page
 
-  // Hero Section (Home Page) - Main content does not need to be translated for 8 languages by default
+  // サイト名(ブラウザのタブ名・SNS共有に使われます。英語表記)
+  labName: profile.name.en,
+  university: profile.university.en,
+  // ロゴは表示しません(下の LOGO_IMAGE.enable)。ここは検索エンジン向けの代表画像として使われます。
+  logo: '/favicon.svg',
+  avatar: '/favicon.svg',
+  email: profile.email,
+
+  // トップページの背景画像(src/assets/hero-real.jpg)。差し替えるときは同じ名前で上書きします。
   hero: {
-    title: 'Advancing Computer Vision & Deep Learning Research.',
-    subtitle: 'We are the Scholar-Lite Lab.',
-    action: 'View Publications', // Optional call to action text
-    image: heroImage, // Hero image path
+    image: heroImage,
   },
 
-  // Navigation
+  // メニュー(key は src/i18n/ui.ts の 'nav.○○' に対応)
   nav: [
-    { text: 'Home', link: '/', key: 'home' },
+    { text: 'Profile', link: '/profile', key: 'profile' },
     { text: 'Research', link: '/research', key: 'research' },
-    { text: 'Achievements', link: '/achievements', key: 'achievements' },
-    { text: 'Team', link: '/team', key: 'team' },
-    { text: 'Activities', link: '/activities', key: 'activities' },
-    { text: 'Join Us', link: '/join', key: 'join' },
-    { text: 'Search', link: '/search', key: 'search' },
+    { text: 'Business', link: '/business', key: 'business' },
+    { text: 'News', link: '/news', key: 'news' },
+    { text: 'Contact', link: '/contact', key: 'contact' },
   ],
 
-  // Custom Pages (Appended after 'Join Us')
   customPages: [
     // Example: { text: 'Alumni', link: '/alumni', key: 'alumni' }
   ],
-  
+
   // i18n Config
   i18n: {
     enabled: true,
-    defaultLocale: 'zh',
-  }
+    defaultLocale: 'en',
+  },
 };
 
 export const LOCALE = {
@@ -54,18 +52,8 @@ export const LOCALE = {
 } as const;
 
 export const LOGO_IMAGE = {
-  enable: true,
+  enable: false, // false: ロゴを表示しない(名前だけ表示)
   svg: true,
   width: 216,
   height: 46,
 };
-
-export const SOCIALS = [
-  {
-    link: 'https://github.com/fjd2004711/scholar-lite',
-    active: true,
-  },
-];
-
-// Default language configuration
-export const DEFAULT_LANG: 'zh' | 'en' | 'ja' | 'ko' | 'fr' | 'de' | 'es' | 'ru' = 'en'; 

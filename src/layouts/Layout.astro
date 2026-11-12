@@ -20,10 +20,11 @@ const pageTitle = title ? `${title} | ${SITE.labName}` : `${SITE.labName} - ${SI
 // What about nested pages like /research/cv? Our OG generator doesn't handle them yet (it only has static pages list).
 // So we will use a fallback.
 const currentPath = Astro.url.pathname.replace(/^\/|\/$/g, '');
-const ogSlug = currentPath === '' ? 'index' : currentPath;
+// /news/○○ のような個別ページは、最初の部分(news)の画像を使う
+const ogSlug = currentPath === '' ? 'index' : currentPath.split('/')[0];
 // Check if the current path is one of our supported OG pages (index, research, team, publications, news, join).
 // If not, fallback to index.
-const supportedOgPages = ['index', 'research', 'team', 'publications', 'news', 'join'];
+const supportedOgPages = ['index', 'profile', 'research', 'business', 'news', 'contact'];
 const finalOgSlug = supportedOgPages.includes(ogSlug) ? ogSlug : 'index';
 const ogImage = new URL(`/og/${finalOgSlug}.png`, Astro.url);
 ---
@@ -62,10 +63,10 @@ const ogImage = new URL(`/og/${finalOgSlug}.png`, Astro.url);
           "name": SITE.author,
           "url": SITE.website,
           "image": new URL(SITE.avatar || SITE.logo, SITE.website).href,
-          "jobTitle": "Principal Investigator",
+          "jobTitle": SITE.jobTitle,
           "worksFor": {
             "@type": "Organization",
-            "name": SITE.labName,
+            "name": SITE.university,
             "url": SITE.website
           },
           "description": SITE.description
@@ -95,17 +96,20 @@ const ogImage = new URL(`/og/${finalOgSlug}.png`, Astro.url);
       const fallbackLang = defaultLang;
 
       function getStoredLang() {
-        if (typeof localStorage !== 'undefined') {
-          return localStorage.getItem('preferred-lang') || fallbackLang;
-        }
-        return fallbackLang;
+        try {
+          const saved = localStorage.getItem('preferred-lang');
+          if (saved && translations[saved]) return saved;
+        } catch (e) {}
+        // 初めての訪問: ブラウザの言語が日本語なら日本語、それ以外は英語
+        const browserLang = (navigator.language || '').toLowerCase();
+        const detected = browserLang.startsWith('ja') ? 'ja' : fallbackLang;
+        return translations[detected] ? detected : fallbackLang;
       }
 
-      // Expose global setLanguage function
-      window.setLanguage = (lang) => {
-        localStorage.setItem('preferred-lang', lang);
+      // 画面の文言を指定した言語に切り替える(選んだ言語の保存はしない)
+      function applyLanguage(lang) {
         document.documentElement.lang = lang;
-        
+
         // Update all elements with data-i18n-key
         const elements = document.querySelectorAll('[data-i18n-key]');
         elements.forEach(el => {
@@ -120,14 +124,25 @@ const ogImage = new URL(`/og/${finalOgSlug}.png`, Astro.url);
           }
         });
 
+        // 日英を並べて持つ本文(data-ja / data-en)を切り替える
+        const biLang = lang === 'ja' ? 'ja' : 'en';
+        document.querySelectorAll('[data-bi]').forEach(el => {
+          const text = el.getAttribute('data-' + biLang);
+          if (text !== null) el.textContent = text;
+        });
+
         // Dispatch event for other components (like Header)
         window.dispatchEvent(new CustomEvent('language-change', { detail: { lang } }));
+      }
+
+      // Expose global setLanguage function (言語ボタンから呼ばれ、選んだ言語を保存する)
+      window.setLanguage = (lang) => {
+        try { localStorage.setItem('preferred-lang', lang); } catch (e) {}
+        applyLanguage(lang);
       };
 
-      // Initialize
-      const currentLang = getStoredLang();
-      // Run immediately to avoid flash
-      window.setLanguage(currentLang);
+      // Initialize (Run immediately to avoid flash)
+      applyLanguage(getStoredLang());
     </script>
   </body>
 </html>

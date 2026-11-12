@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Mail, ExternalLink, Copy } from 'lucide-react';
+import { profile } from '../data/profile';
+import { ui } from '../i18n/ui';
+import { bi } from '../i18n/bi';
+
+// 最初に書き出される文言は日本語(英語は、言語切り替えで差し替わります)
+const jp = ui.ja;
+
+const headingClass = 'text-lg font-semibold text-gray-900 mb-2';
+---
+
+<Layout title="Contact">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4" data-i18n-key="contact.title">{jp['contact.title']}</h1>
+      <p class="text-lg text-gray-600" data-i18n-key="contact.subtitle">{jp['contact.subtitle']}</p>
+    </div>
+
+    <!-- メール(ボタンを押すと、普段使っているメールソフトが開きます) -->
+    <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center mb-10">
+      <a
+        href={`mailto:${profile.email}`}
+        class="inline-flex items-center gap-3 px-8 py-4 text-lg font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors shadow-md"
+      >
+        <Mail className="w-5 h-5" />
+        <span data-i18n-key="contact.send">{jp['contact.send']}</span>
+      </a>
+      <p class="mt-5 text-gray-700 select-all break-all" id="contact-email">{profile.email}</p>
+      <button
+        type="button"
+        id="copy-email"
+        data-email={profile.email}
+        class="mt-3 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-full hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all"
+      >
+        <Copy className="w-4 h-4" />
+        <span id="copy-label" data-i18n-key="contact.copy">{jp['contact.copy']}</span>
+      </button>
+    </section>
+
+    <!-- 所属 -->
+    <section class="mb-8">
+      <h2 class={headingClass} data-i18n-key="contact.affiliation">{jp['contact.affiliation']}</h2>
+      <p class="text-gray-700">
+        <span {...bi(profile.university)}>{profile.university.ja}</span>{' '}
+        <span {...bi(profile.department)}>{profile.department.ja}</span>
+      </p>
+      <p class="text-gray-600 text-sm">
+        <span {...bi(profile.name)}>{profile.name.ja}</span>(<span {...bi(profile.role)}>{profile.role.ja}</span>)
+      </p>
+    </section>
+
+    <!-- リンク -->
+    {profile.links.length > 0 && (
+      <section>
+        <h2 class={headingClass} data-i18n-key="contact.links">{jp['contact.links']}</h2>
+        <div class="flex flex-wrap gap-3">
+          {profile.links.map(link => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-full hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all"
+            >
+              <ExternalLink className="w-4 h-4" />
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</Layout>
+
+<script>
+  // 「アドレスをコピー」ボタン
+  const button = document.getElementById('copy-email');
+  const label = document.getElementById('copy-label');
+  button?.addEventListener('click', async () => {
+    const email = button.getAttribute('data-email') || '';
+    try {
+      await navigator.clipboard.writeText(email);
+    } catch (e) {
+      // コピーできない環境では、アドレスを選択状態にする
+      const range = document.createRange();
+      const target = document.getElementById('contact-email');
+      if (target) {
+        range.selectNodeContents(target);
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+      return;
+    }
+    if (!label) return;
+    // 現在の言語の「コピーしました」を、短い時間だけ表示する
+    const lang = document.documentElement.lang === 'ja' ? 'ja' : 'en';
+    const copied = lang === 'ja' ? 'コピーしました' : 'Copied!';
+    const original = label.textContent;
+    label.textContent = copied;
+    setTimeout(() => { label.textContent = original; }, 1500);
+  });
+</script>

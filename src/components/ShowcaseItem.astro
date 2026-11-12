@@ -1,0 +1,30 @@
+---
+// 研究内容・事業化活動ページで使う「写真 + 文章」の1ブロック。
+// 写真(image)がなければ文章だけを表示します。index が奇数のブロックは写真を右側に置きます。
+import { bi } from '../i18n/bi';
+import type { Bi } from '../i18n/bi';
+
+interface Props {
+  title: Bi;
+  body: Bi[];
+  image?: string;
+  index?: number;
+}
+
+const { title, body, image, index = 0 } = Astro.props;
+const reverse = index % 2 === 1;
+---
+
+<article class={`flex flex-col gap-6 md:gap-10 items-center ${reverse ? 'md:flex-row-reverse' : 'md:flex-row'}`}>
+  {image && (
+    <div class="w-full md:w-1/2 shrink-0 overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-gray-50 aspect-[3/2]">
+      <img src={image} alt={title.en} loading="lazy" class="w-full h-full object-cover" />
+    </div>
+  )}
+  <div class:list={['w-full', image && 'md:w-1/2']}>
+    <h3 class="text-xl font-semibold text-gray-900 mb-3" {...bi(title)}>{title.ja}</h3>
+    <div class="space-y-3 text-gray-700 leading-relaxed">
+      {body.map(paragraph => <p {...bi(paragraph)}>{paragraph.ja}</p>)}
+    </div>
+  </div>
+</article>

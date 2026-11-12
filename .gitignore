@@ -39,3 +39,8 @@ coverage/
 
 # Vercel
 .vercel/
+
+# citations.bib から `npm run import-bibtex` が自動生成する業績ファイル
+# (公開時の `npm run build` でも自動生成されるため、Git には含めません)
+src/content/publications/*.md
+src/content/books/*.md

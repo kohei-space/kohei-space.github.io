@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { ArrowRight } from 'lucide-react';
+import { news } from '../../data/news';
+import { ui } from '../../i18n/ui';
+import { bi } from '../../i18n/bi';
+
+// 最初に書き出される文言は日本語(英語は、言語切り替えで差し替わります)
+const jp = ui.ja;
+
+// 日付の新しい順(日付は 年-月-日 の形なので、文字の比較でそのまま並べ替えできます)
+const items = [...news].sort((a, b) => b.date.localeCompare(a.date));
+---
+
+<Layout title="News">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <div class="max-w-3xl mx-auto text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4" data-i18n-key="news.title">{jp['news.title']}</h1>
+      <p class="text-lg text-gray-600" data-i18n-key="news.subtitle">{jp['news.subtitle']}</p>
+    </div>
+
+    <ul class="space-y-4">
+      {items.map(item => (
+        <li>
+          <a
+            href={`/news/${item.slug}`}
+            class="group flex gap-5 items-start bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all"
+          >
+            {item.image && (
+              <img src={item.image} alt="" loading="lazy" class="hidden sm:block w-40 h-28 object-cover rounded-lg border border-gray-100 shrink-0" />
+            )}
+            <div class="flex-1 min-w-0">
+              <time class="text-sm text-gray-500" datetime={item.date}>{item.date}</time>
+              <h2 class="text-lg font-semibold text-gray-900 mt-1 mb-1 group-hover:text-blue-600 transition-colors" {...bi(item.title)}>{item.title.ja}</h2>
+              <p class="text-sm text-gray-600 line-clamp-2" {...bi(item.summary)}>{item.summary.ja}</p>
+              <span class="inline-flex items-center gap-1 mt-3 text-sm font-medium text-blue-600">
+                <span data-i18n-key="news.readMore">{jp['news.readMore']}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {items.length === 0 && (
+      <p class="text-center text-gray-500 italic" data-i18n-key="news.empty">{jp['news.empty']}</p>
+    )}
+  </div>
+</Layout>

@@ -1,0 +1,132 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { Mail, ExternalLink } from 'lucide-react';
+import { profile } from '../data/profile';
+import { ui } from '../i18n/ui';
+import { bi } from '../i18n/bi';
+import { getCollection } from 'astro:content';
+import PublicationItem from '../components/PublicationItem.astro';
+
+// 最初に書き出される文言は日本語(英語は、言語切り替えで差し替わります)
+const jp = ui.ja;
+
+// citations.bib から生成された業績(新しい順)
+const papers = (await getCollection('publications'))
+  .filter(p => p.data.type === 'paper')
+  .sort((a, b) => b.data.year - a.data.year);
+
+const headingClass = 'text-2xl font-bold text-gray-900 mb-6 pl-4 border-l-4 border-blue-600';
+---
+
+<Layout title="Profile">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+
+    <!-- 名前・写真・連絡先 -->
+    <section class="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-16">
+      <Image
+        src={profile.photo}
+        alt={profile.name.en}
+        width={240}
+        height={240}
+        class="w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover border border-gray-100 shadow-md shrink-0"
+      />
+      <div class="text-center sm:text-left">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2" {...bi(profile.name)}>{profile.name.ja}</h1>
+        <p class="text-lg text-gray-700" {...bi(profile.role)}>{profile.role.ja}</p>
+        <p class="text-gray-600 mb-5">
+          <span {...bi(profile.university)}>{profile.university.ja}</span>{' '}
+          <span {...bi(profile.department)}>{profile.department.ja}</span>
+        </p>
+        <div class="flex flex-wrap justify-center sm:justify-start gap-3">
+          <a
+            href={`mailto:${profile.email}`}
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
+          >
+            <Mail className="w-4 h-4" />
+            {profile.email}
+          </a>
+          {profile.links.map(link => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-full hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all"
+            >
+              <ExternalLink className="w-4 h-4" />
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 自己紹介 -->
+    <section id="about" class="mb-16 scroll-mt-24">
+      <h2 class={headingClass} data-i18n-key="profile.about">{jp['profile.about']}</h2>
+      <div class="space-y-4 text-gray-700 leading-relaxed">
+        {profile.bio.map(paragraph => (
+          <p {...bi(paragraph)}>{paragraph.ja}</p>
+        ))}
+      </div>
+    </section>
+
+    <!-- 研究分野 -->
+    {profile.interests.length > 0 && (
+      <section id="interests" class="mb-16 scroll-mt-24">
+        <h2 class={headingClass} data-i18n-key="profile.interests">{jp['profile.interests']}</h2>
+        <ul class="flex flex-wrap gap-3">
+          {profile.interests.map(item => (
+            <li class="px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-medium" {...bi(item)}>{item.ja}</li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <!-- 学歴 -->
+    {profile.education.length > 0 && (
+      <section id="education" class="mb-16 scroll-mt-24">
+        <h2 class={headingClass} data-i18n-key="profile.education">{jp['profile.education']}</h2>
+        <ol class="space-y-8 border-l border-gray-200 ml-2">
+          {profile.education.map(item => (
+            <li class="relative pl-6">
+              <span class="absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+              <div class="text-sm text-gray-500" {...bi(item.period)}>{item.period.ja}</div>
+              <div class="font-semibold text-gray-900" {...bi(item.title)}>{item.title.ja}</div>
+              <div class="text-gray-600" {...bi(item.org)}>{item.org.ja}</div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    <!-- 受賞歴 -->
+    {profile.awards.length > 0 && (
+      <section id="awards" class="mb-16 scroll-mt-24">
+        <h2 class={headingClass} data-i18n-key="profile.awards">{jp['profile.awards']}</h2>
+        <div class="grid gap-6 sm:grid-cols-2">
+          {profile.awards.map(award => (
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+              <div class="text-sm text-gray-500 mb-2" {...bi(award.date)}>{award.date.ja}</div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-1" {...bi(award.title)}>{award.title.ja}</h3>
+              <p class="text-sm text-gray-600" {...bi(award.org)}>{award.org.ja}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- 業績(citations.bib) -->
+    <section id="publications" class="mb-16 scroll-mt-24">
+      <h2 class={headingClass} data-i18n-key="profile.publications">{jp['profile.publications']}</h2>
+      <div class="grid gap-2">
+        {papers.map(paper => <PublicationItem entry={paper} />)}
+        {papers.length === 0 && <p class="text-gray-500 italic" data-i18n-key="profile.noPapers">{jp['profile.noPapers']}</p>}
+      </div>
+    </section>
+
+    {profile.notice && (
+      <p class="mt-8 pt-6 border-t border-gray-100 text-sm text-gray-500" {...bi(profile.notice)}>{profile.notice.ja}</p>
+    )}
+  </div>
+</Layout>

@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ShowcaseItem from '../components/ShowcaseItem.astro';
+import { User } from 'lucide-react';
+import { business } from '../data/business';
+import { ui } from '../i18n/ui';
+import { bi } from '../i18n/bi';
+
+// 最初に書き出される文言は日本語(英語は、言語切り替えで差し替わります)
+const jp = ui.ja;
+
+const headingClass = 'text-2xl font-bold text-gray-900 mb-8 pl-4 border-l-4 border-blue-600';
+---
+
+<Layout title="Business">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <div class="max-w-3xl mx-auto text-center mb-16">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4" data-i18n-key="business.title">{jp['business.title']}</h1>
+      <p class="text-lg text-gray-600" {...bi(business.intro)}>{business.intro.ja}</p>
+    </div>
+
+    <section id="plans" class="mb-20 scroll-mt-24">
+      <h2 class={headingClass} data-i18n-key="business.plans">{jp['business.plans']}</h2>
+      <div class="space-y-12">
+        {business.plans.map((item, i) => <ShowcaseItem {...item} index={i} />)}
+      </div>
+    </section>
+
+    {business.members.length > 0 && (
+      <section id="members" class="mb-8 scroll-mt-24">
+        <h2 class={headingClass} data-i18n-key="business.members">{jp['business.members']}</h2>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {business.members.map(member => (
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col items-center text-center">
+              {member.photo ? (
+                <img
+                  src={member.photo}
+                  alt={member.name.en}
+                  loading="lazy"
+                  class="w-32 h-32 rounded-full object-cover border border-gray-100 shadow-sm mb-4"
+                />
+              ) : (
+                <div class="w-32 h-32 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mb-4" aria-hidden="true">
+                  <User className="w-14 h-14" />
+                </div>
+              )}
+              <h3 class="text-lg font-semibold text-gray-900" {...bi(member.name)}>{member.name.ja}</h3>
+              <p class="text-sm text-blue-700 mt-1 mb-4" {...bi(member.affiliation)}>{member.affiliation.ja}</p>
+              <ul class="text-sm text-gray-600 space-y-1 text-left w-full border-t border-gray-100 pt-4">
+                {member.career.map(line => <li {...bi(line)}>{line.ja}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</Layout>

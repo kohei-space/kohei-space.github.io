@@ -90,7 +90,8 @@ function importBibtex() {
     // Extract additional fields
     // Cover image: check 'cover', 'image', 'figure'
     let cover = cleanString(tags.cover || tags.image || tags.figure || '');
-    const DEFAULT_COVER = '../../assets/paper-vision.jpg';
+    // 表紙画像は citations.bib に cover={...} を書いたときだけ表示します
+    // (書かない場合は、画像なしで表示されます)
 
     // Validate cover image existence
     if (cover) {
@@ -98,15 +99,13 @@ function importBibtex() {
       // ../../assets/xxx.jpg -> src/assets/xxx.jpg
       const relativeToRoot = cover.replace('../../', 'src/');
       const absolutePath = path.join(process.cwd(), relativeToRoot);
-      
+
       if (!fs.existsSync(absolutePath)) {
-        console.warn(`Warning: Cover image not found at ${absolutePath}. Using default.`);
-        cover = DEFAULT_COVER;
+        console.warn(`Warning: Cover image not found at ${absolutePath}. Skipping cover.`);
+        cover = '';
       }
-    } else {
-      cover = DEFAULT_COVER;
     }
-    
+
     // PDF link
     let pdf = cleanString(tags.pdf || tags.file || tags.url || '');
     if (pdf.startsWith(':')) {
@@ -146,10 +145,10 @@ function importBibtex() {
       badges.push({ text: 'Best Student Paper', type: 'gold' });
     }
 
-    // Generate filename: year-firstAuthor-titleSlug
-    const firstAuthor = authors.length > 0 ? authors[0].split(' ').pop() : 'unknown';
-    const titleSlug = slugify(title, { lower: true, strict: true }).slice(0, 30);
-    const filename = `${year}-${firstAuthor}-${titleSlug}.md`;
+    // Generate filename: year-citationKey
+    // BibTeX のキー(例: yamada2025orbit)は重複しないので、日本語のタイトルでもファイル名が衝突しません
+    const keySlug = slugify(entry.citationKey || title, { lower: true, strict: true }) || `entry-${count + 1}`;
+    const filename = `${year}-${keySlug}.md`;
     const filePath = path.join(OUTPUT_DIR, filename);
 
     // Determine featured status
@@ -177,7 +176,7 @@ function importBibtex() {
       `venue: "${venue.replace(/"/g, '\\"')}"`,
       // Only add type for publications, not books
       isBook ? '' : `type: "${type}"`,
-      `cover: "${cover}"`,
+      cover ? `cover: "${cover}"` : '',
       'links:',
       `  pdf: "${pdf}"`,
       `  code: "${code}"`,
